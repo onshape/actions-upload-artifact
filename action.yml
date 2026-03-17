@@ -29,5 +29,5 @@ inputs:
       If false, hidden files will be excluded from the uploaded artifact.
     default: 'false'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
