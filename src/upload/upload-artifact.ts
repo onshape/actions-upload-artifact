@@ -3,10 +3,10 @@ import artifact, {
   UploadArtifactOptions,
   ArtifactNotFoundError
 } from '@actions/artifact'
-import {findFilesToUpload} from '../shared/search'
-import {getInputs} from './input-helper'
-import {NoFileOptions} from './constants'
-import {uploadArtifact} from '../shared/upload-artifact'
+import {findFilesToUpload} from '../shared/search.js'
+import {getInputs} from './input-helper.js'
+import {NoFileOptions} from './constants.js'
+import {uploadArtifact} from '../shared/upload-artifact.js'
 
 async function deleteArtifactIfExists(artifactName: string): Promise<void> {
   try {
@@ -24,7 +24,10 @@ async function deleteArtifactIfExists(artifactName: string): Promise<void> {
 
 export async function run(): Promise<void> {
   const inputs = getInputs()
-  const searchResult = await findFilesToUpload(inputs.searchPath)
+  const searchResult = await findFilesToUpload(
+    inputs.searchPath,
+    inputs.includeHiddenFiles
+  )
   if (searchResult.filesToUpload.length === 0) {
     // No files were found, different use cases warrant different types of behavior if nothing is found
     switch (inputs.ifNoFilesFound) {
@@ -54,6 +57,14 @@ export async function run(): Promise<void> {
     )
     core.debug(`Root artifact directory is ${searchResult.rootDirectory}`)
 
+    // Validate that only a single file is uploaded when archive is false
+    if (!inputs.archive && searchResult.filesToUpload.length > 1) {
+      core.setFailed(
+        `When 'archive' is set to false, only a single file can be uploaded. Found ${searchResult.filesToUpload.length} files to upload.`
+      )
+      return
+    }
+
     if (inputs.overwrite) {
       await deleteArtifactIfExists(inputs.artifactName)
     }
@@ -65,6 +76,10 @@ export async function run(): Promise<void> {
 
     if (typeof inputs.compressionLevel !== 'undefined') {
       options.compressionLevel = inputs.compressionLevel
+    }
+
+    if (!inputs.archive) {
+      options.skipArchive = true
     }
 
     await uploadArtifact(

@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import {Inputs} from './constants'
-import {MergeInputs} from './merge-inputs'
+import {Inputs} from './constants.js'
+import {MergeInputs} from './merge-inputs.js'
 
 /**
  * Helper to get all the inputs for the action
@@ -10,6 +10,7 @@ export function getInputs(): MergeInputs {
   const pattern = core.getInput(Inputs.Pattern, {required: true})
   const separateDirectories = core.getBooleanInput(Inputs.SeparateDirectories)
   const deleteMerged = core.getBooleanInput(Inputs.DeleteMerged)
+  const includeHiddenFiles = core.getBooleanInput(Inputs.IncludeHiddenFiles)
 
   const inputs = {
     name,
@@ -17,7 +18,8 @@ export function getInputs(): MergeInputs {
     separateDirectories,
     deleteMerged,
     retentionDays: 0,
-    compressionLevel: 6
+    compressionLevel: 6,
+    includeHiddenFiles
   } as MergeInputs
 
   const retentionDaysStr = core.getInput(Inputs.RetentionDays)

@@ -5,7 +5,9 @@ export enum Inputs {
   IfNoFilesFound = 'if-no-files-found',
   RetentionDays = 'retention-days',
   CompressionLevel = 'compression-level',
-  Overwrite = 'overwrite'
+  Overwrite = 'overwrite',
+  IncludeHiddenFiles = 'include-hidden-files',
+  Archive = 'archive'
 }
 
 export enum NoFileOptions {

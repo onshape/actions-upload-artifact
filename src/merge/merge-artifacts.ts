@@ -3,9 +3,9 @@ import {mkdtemp, rm} from 'fs/promises'
 import * as core from '@actions/core'
 import {Minimatch} from 'minimatch'
 import artifactClient, {UploadArtifactOptions} from '@actions/artifact'
-import {getInputs} from './input-helper'
-import {uploadArtifact} from '../shared/upload-artifact'
-import {findFilesToUpload} from '../shared/search'
+import {getInputs} from './input-helper.js'
+import {uploadArtifact} from '../shared/upload-artifact.js'
+import {findFilesToUpload} from '../shared/search.js'
 
 const PARALLEL_DOWNLOADS = 5
 
@@ -62,7 +62,10 @@ export async function run(): Promise<void> {
     options.compressionLevel = inputs.compressionLevel
   }
 
-  const searchResult = await findFilesToUpload(tmpDir)
+  const searchResult = await findFilesToUpload(
+    tmpDir,
+    inputs.includeHiddenFiles
+  )
 
   await uploadArtifact(
     inputs.name,

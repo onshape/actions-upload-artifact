@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import {Inputs, NoFileOptions} from './constants'
-import {UploadInputs} from './upload-inputs'
+import {Inputs, NoFileOptions} from './constants.js'
+import {UploadInputs} from './upload-inputs.js'
 
 /**
  * Helper to get all the inputs for the action
@@ -9,6 +9,8 @@ export function getInputs(): UploadInputs {
   const name = core.getInput(Inputs.Name)
   const path = core.getInput(Inputs.Path, {required: true})
   const overwrite = core.getBooleanInput(Inputs.Overwrite)
+  const includeHiddenFiles = core.getBooleanInput(Inputs.IncludeHiddenFiles)
+  const archive = core.getBooleanInput(Inputs.Archive)
 
   const ifNoFilesFound = core.getInput(Inputs.IfNoFilesFound)
   const noFileBehavior: NoFileOptions = NoFileOptions[ifNoFilesFound]
@@ -27,7 +29,9 @@ export function getInputs(): UploadInputs {
     artifactName: name,
     searchPath: path,
     ifNoFilesFound: noFileBehavior,
-    overwrite: overwrite
+    overwrite: overwrite,
+    includeHiddenFiles: includeHiddenFiles,
+    archive: archive
   } as UploadInputs
 
   const retentionDaysStr = core.getInput(Inputs.RetentionDays)
